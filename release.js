@@ -20,7 +20,7 @@ const getCommits = async (tag) => {
 }
 
 const getTags = async () => {
-    return (await execute('git', ['tag'])).split("\n").filter(Boolean);
+    return (await execute('git', ['tag'])).split("\n");
 }
 
 const execute = async (command, args) => {
