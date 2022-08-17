@@ -1,13 +1,28 @@
 const github = require('@actions/github');
 const exec = require('@actions/exec');
 
+require("dotenv").config();
+
+const { ISSUE_ID, OAUTH_TOKEN, CLIENT_ID, TRACKER_HOST} = process.env;
+
+const headers = {
+    Authorization: `OAuth ${OAUTH_TOKEN}`,
+    "X-Org-ID": CLIENT_ID,
+}
+
 const release = async () => {
     const currentTag = getTag()
     const commits = await getCommits('rc-0.0.1')
     const pusher = getPusher()
     const date = getDate()
-    console.log(pusher)
-    console.log(date)
+    await fetch(`${TRACKER_HOST}/v2/issues/${ISSUE_ID}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({
+            summary: "Тестирование summary",
+            description: "Описание"
+        })
+    })
 }
 
 const getTag = () => github.context.payload.ref.replace("refs/tags/", "") ?? ""

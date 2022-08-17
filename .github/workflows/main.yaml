@@ -17,7 +17,14 @@ jobs:
       - run: npm run ts
       - run: npm run lint
       - run: npm run test
-      - run: node release.js
+
+      - name: "Run Release"
+        env:
+          OAUTH_TOKEN: ${{ secrets.OAUTH_TOKEN }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          ISSUE_ID: ${{ secrets.ISSUE_ID }}
+          TRACKER_HOST: ${{ secrets.TRACKER_HOST }}
+        run: node release.js
 
   release:
     runs-on: ubuntu-latest
