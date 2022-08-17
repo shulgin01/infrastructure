@@ -1,3 +1,4 @@
+const fetch = require("node-fetch");
 const github = require('@actions/github');
 const exec = require('@actions/exec');
 
