@@ -3,13 +3,18 @@ const exec = require('@actions/exec');
 
 const release = async () => {
     const currentTag = getTag()
-    console.log(await getTags())
-    console.log(currentTag)
     const commits = await getCommits('rc-0.0.1')
-    console.log(commits)
+    const pusher = getPusher()
+    const date = getDate()
+    console.log(pusher)
+    console.log(date)
 }
 
 const getTag = () => github.context.payload.ref.replace("refs/tags/", "") ?? ""
+
+const getPusher = () => github.context.payload.pusher?.name ?? ""
+
+const getDate = () => new Date().toLocaleDateString()
 
 const getCommits = async (tag) => {
     const tags = await getTags()
