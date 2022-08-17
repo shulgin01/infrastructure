@@ -3,6 +3,7 @@ const exec = require('@actions/exec');
 
 const release = async () => {
     const currentTag = getTag()
+    console.log(await getTags())
     console.log(currentTag)
     const commits = await getCommits('rc-0.0.1')
     console.log(commits)
@@ -19,7 +20,7 @@ const getCommits = async (tag) => {
 }
 
 const getTags = async () => {
-    return (await execute('git', ['tag'])).split('\n').filter(Boolean)
+    return (await execute('git', ['tag'])).split("\n").filter(Boolean);
 }
 
 const execute = async (command, args) => {
