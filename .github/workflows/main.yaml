@@ -15,6 +15,7 @@ jobs:
       - run: npm run ts
       - run: npm run lint
       - run: npm run test
+      - run: node release.js
 
   release:
     runs-on: ubuntu-latest
