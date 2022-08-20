@@ -13,6 +13,7 @@ const headers = {
 
 const updateTicket = async () => {
     const currentTag = github.context.payload.ref.replace("refs/tags/", "") ?? ""
+    console.log(`Tag ${currentTag}`)
     const commits = await getCommits(currentTag)
 
     const pusher = github.context.payload.pusher?.name ?? ""
