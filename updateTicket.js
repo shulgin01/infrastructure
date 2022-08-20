@@ -11,37 +11,42 @@ const headers = {
     "X-Org-ID": CLIENT_ID,
 }
 
-const release = async () => {
-    const currentTag = getTag()
-    const commits = await getCommits('rc-0.0.1')
-    const pusher = getPusher()
-    const date = getDate()
+const updateTicket = async () => {
+    const currentTag = github.context.payload.ref.replace("refs/tags/", "") ?? ""
+    const commits = await getCommits(currentTag)
+
+    const pusher = github.context.payload.pusher?.name ?? ""
+    const date = new Date().toLocaleDateString()
+
+    const summary = `Релиз №${currentTag.replace("rc-", "")} от ${date}`;
+    const description = `Ответственный за релиз: ${pusher}\n---\nКоммиты, попавшие в релиз:\n${commits}`;
+
     await fetch(`${TRACKER_HOST}/v2/issues/${ISSUE_ID}`, {
         method: "PATCH",
         headers,
         body: JSON.stringify({
-            summary: "Тестирование summary",
-            description: "Описание"
+            summary,
+            description
         })
     })
 }
 
-const getTag = () => github.context.payload.ref.replace("refs/tags/", "") ?? ""
-
-const getPusher = () => github.context.payload.pusher?.name ?? ""
-
-const getDate = () => new Date().toLocaleDateString()
-
 const getCommits = async (tag) => {
     const tags = await getTags()
     const currentIndex = tags.indexOf(tag)
-    const commitsFilter = tags.length === 1 ? tag : `${tag}...${tags[currentIndex - 1]}`;
+    const commitsFilter = tags.length === 1 ? tag : `${tags[currentIndex - 1]}...${tag}`;
     const releaseCommits = await execute('git', ['log', '--pretty=format:"%H %an %s"', commitsFilter]);
     return releaseCommits.replace(/"/g, "");
 }
 
 const getTags = async () => {
-    return (await execute('git', ['tag'])).split("\n").filter(Boolean);
+    return (await execute('git', ['tag'])).split("\n")
+        .filter(Boolean)
+        .sort((a, b) => {
+            const aVal = parseInt(a.replace("rc-0.0.", ""), 10);
+            const bVal = parseInt(b.replace("rc-0.0.", ""), 10);
+            return aVal - bVal;
+        });
 }
 
 const execute = async (command, args) => {
@@ -66,4 +71,4 @@ const execute = async (command, args) => {
     return output
 }
 
-release().then(() => console.log("Success"))
+updateTicket().then(() => console.log("Success update ticket"))

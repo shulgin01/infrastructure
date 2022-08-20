@@ -18,14 +18,6 @@ jobs:
       - run: npm run lint
       - run: npm run test
 
-      - name: "Run Release"
-        env:
-          OAUTH_TOKEN: ${{ secrets.OAUTH_TOKEN }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          ISSUE_ID: ${{ secrets.ISSUE_ID }}
-          TRACKER_HOST: ${{ secrets.TRACKER_HOST }}
-        run: node release.js
-
   release:
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
@@ -42,4 +34,17 @@ jobs:
           run: npm install
 
         - name: "Update ticket"
-          run: node release.js
+          env:
+            OAUTH_TOKEN: ${{ secrets.OAUTH_TOKEN }}
+            CLIENT_ID: ${{ secrets.CLIENT_ID }}
+            ISSUE_ID: ${{ secrets.ISSUE_ID }}
+            TRACKER_HOST: ${{ secrets.TRACKER_HOST }}
+          run: node updateTicket.js
+
+        - name: "Build Image"
+          env:
+            OAUTH_TOKEN: ${{ secrets.OAUTH_TOKEN }}
+            CLIENT_ID: ${{ secrets.CLIENT_ID }}
+            ISSUE_ID: ${{ secrets.ISSUE_ID }}
+            TRACKER_HOST: ${{ secrets.TRACKER_HOST }}
+          run: node buildImage.js
