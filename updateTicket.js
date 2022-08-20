@@ -17,7 +17,9 @@ const updateTicket = async () => {
     const commits = await getCommits(currentTag)
 
     const pusher = github.context.payload.pusher?.name ?? ""
+    console.log(`Pusher ${pusher}`)
     const date = new Date().toLocaleDateString()
+    console.log(`Date ${date}`)
 
     const summary = `Релиз №${currentTag.replace("rc-", "")} от ${date}`;
     const description = `Ответственный за релиз: ${pusher}\n---\nКоммиты, попавшие в релиз:\n${commits}`;

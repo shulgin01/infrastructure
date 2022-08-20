@@ -13,6 +13,7 @@ const headers = {
 
 const buildImage = async () => {
     const currentTag = github.context.payload.ref.replace("refs/tags/", "") ?? ""
+    console.log(`Tag ${currentTag}`)
 
     await exec.exec('docker', ['build', '-t', `app:${currentTag}`, '.']);
     console.info("Image build");
